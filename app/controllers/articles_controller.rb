@@ -19,9 +19,38 @@ class ArticlesController < ApplicationController
   def edit
   end
 
+  # ----------
+  # example methods
+  def too_heavy
+    # asume too heavy processing
+    10.times do |i|
+      sleep 2
+    end
+  end
+
+  def sync_too_heavy
+    # HardJob is like too heavy job
+    HardJob.perform_now # sync
+  end
+
+  def async_too_heavy
+    # HardJob is like too heavy job
+    HardJob.perform_later #async
+  end
+  # ----------
+
   # POST /articles or /articles.json
   def create
     @article = Article.new(article_params)
+
+    ### If we comment out the following
+    ### We have to wait about 20 seconds for registration to be completed
+    # too_heavy
+    # sync_too_heavy
+
+    ### if processing that the user does not have to wait
+    ### By executing asynchronously, we can return a response quickly
+    async_too_heavy
 
     respond_to do |format|
       if @article.save
